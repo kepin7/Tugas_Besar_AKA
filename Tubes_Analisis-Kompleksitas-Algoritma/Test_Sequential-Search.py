@@ -77,14 +77,14 @@ if __name__ == "__main__":
             hasil_rekursif, waktu_rekursif = cari_jadwal_rekursif(dataset, keyword)
 
             if hasil_iteratif:
-                print(f"Pencarian Iteratif: Jadwal ditemukan: {hasil_iteratif}, Waktu: {waktu_iteratif:.6f} detik")
+                print(f"Pencarian Iteratif: Jadwal kereta api ditemukan: {hasil_iteratif}, Waktu: {waktu_iteratif:.6f} detik")
             else:
-                print(f"Pencarian Iteratif: Jadwal tidak ditemukan, Waktu: {waktu_iteratif:.6f} detik")
+                print(f"Pencarian Iteratif: Jadwal kereta api tidak ditemukan, Waktu: {waktu_iteratif:.6f} detik")
 
             if hasil_rekursif:
-                print(f"Pencarian Rekursif: Jadwal ditemukan: {hasil_rekursif}, Waktu: {waktu_rekursif:.6f} detik")
+                print(f"Pencarian Rekursif: Jadwal kereta api ditemukan: {hasil_rekursif}, Waktu: {waktu_rekursif:.6f} detik")
             else:
-                print(f"Pencarian Rekursif: Jadwal tidak ditemukan, Waktu: {waktu_rekursif:.6f} detik")
+                print(f"Pencarian Rekursif: Jadwal kereta api tidak ditemukan, Waktu: {waktu_rekursif:.6f} detik")
 
             iteratif_times.append(waktu_iteratif)
             rekursif_times.append(waktu_rekursif)
