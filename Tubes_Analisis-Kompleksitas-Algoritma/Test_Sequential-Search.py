@@ -1,57 +1,63 @@
-from prettytable import PrettyTable
-import random
 import time
 import matplotlib.pyplot as plt
+from prettytable import PrettyTable
 
-# Fungsi untuk membuat dataset secara dinamis
-def buat_dataset(ukuran):
-    dataset = []
-    ids = random.sample(range(1, ukuran * 2), ukuran)
-    kota_asal = ["Jakarta", "Bandung", "Surabaya", "Yogyakarta", "Semarang"]
-    kota_tujuan = ["Purwokerto", "Kroya", "Kutoarjo", "Kiaracondong", "Solobalapan"]
-    for i in range(ukuran):
-        dataset.append({
-            "id": ids[i],
-            "kota_asal": random.choice(kota_asal),
-            "kota_tujuan": random.choice(kota_tujuan),
-            "waktu_keberangkatan": f"{random.randint(0, 23)}:{random.randint(0, 59):02}",
-        })
-    return dataset
+# Fungsi untuk membuat dataset dinamis
+def buat_dataset(size):
+    return [
+        {
+            "id": i,
+            "kota_asal": f"Kota {chr(65 + (i % 26))}",
+            "kota_tujuan": f"Kota {chr(90 - (i % 26))}",
+            "waktu_keberangkatan": f"{i % 24:02}:00",
+        }
+        for i in range(1, size + 1)
+    ]
 
-# Fungsi sequential search secara iteratif
-def pencarian_sequential_iteratif(dataset, keyword):
-    for jadwal in dataset:
-        if keyword.lower() in jadwal["kota_asal"].lower() or keyword.lower() in jadwal["kota_tujuan"].lower():
+# Fungsi sequential search (Iteratif)
+def sequential_search_iteratif(data, keyword):
+    for jadwal in data:
+        if keyword.lower() in jadwal["kota_asal"].lower():
             return jadwal
     return False
 
-# Fungsi sequential search secara rekursif
-def pencarian_sequential_rekursif(dataset, keyword, indeks=0):
-    if indeks >= len(dataset):
+# Fungsi sequential search (Rekursif)
+def sequential_search_rekursif(data, keyword, index=0):
+    if index >= len(data):
         return False
-    if keyword.lower() in dataset[indeks]["kota_asal"].lower() or keyword.lower() in dataset[indeks]["kota_tujuan"].lower():
-        return dataset[indeks]
-    return pencarian_sequential_rekursif(dataset, keyword, indeks + 1)
+    if keyword.lower() in data[index]["kota_asal"].lower():
+        return data[index]
+    return sequential_search_rekursif(data, keyword, index + 1)
 
-# Fungsi untuk mencari jadwal dengan algoritma iteratif
-def cari_jadwal_iteratif(dataset, keyword):
+# Fungsi untuk mencari jadwal berdasarkan algoritma iteratif & rekursif
+def cari_jadwal(data, keyword):
+    # Pencarian menggunakan iteratif
     waktu_mulai = time.perf_counter()
-    hasil = pencarian_sequential_iteratif(dataset, keyword)
+    hasil_iteratif = sequential_search_iteratif(data, keyword)
     waktu_selesai = time.perf_counter()
-    waktu_total = max(waktu_selesai - waktu_mulai, 1e-6)
-    return hasil, waktu_total
+    waktu_iteratif = waktu_selesai - waktu_mulai
 
-# Fungsi untuk mencari jadwal dengan algoritma rekursif
-def cari_jadwal_rekursif(dataset, keyword):
+    # Pencarian menggunakan rekursif
     waktu_mulai = time.perf_counter()
-    hasil = pencarian_sequential_rekursif(dataset, keyword)
+    hasil_rekursif = sequential_search_rekursif(data, keyword)
     waktu_selesai = time.perf_counter()
-    waktu_total = max(waktu_selesai - waktu_mulai, 1e-6)
-    return hasil, waktu_total
+    waktu_rekursif = waktu_selesai - waktu_mulai
 
-# Program utama untuk input ukuran dataset
-if __name__ == "__main__":
-    print("Analisis Kompleksitas Algoritma Sequential Search pada Jadwal Kereta Api")
+    # Menampilkan hasil
+    if hasil_iteratif:
+        print(f"\nPencarian Iteratif: \nJadwal kereta api ditemukan: {hasil_iteratif}, Waktu: {waktu_iteratif:.6f} detik")
+    else:
+        print(f"Pencarian Iteratif: \nJadwal kereta api tidak ditemukan, Waktu: {waktu_iteratif:.6f} detik")
+
+    if hasil_rekursif:
+        print(f"Pencarian Rekursif: \nJadwal kereta api ditemukan: {hasil_rekursif}, Waktu: {waktu_rekursif:.6f} detik")
+    else:
+        print(f"Pencarian Rekursif: \nJadwal kereta api tidak ditemukan, Waktu: {waktu_rekursif:.6f} detik")
+
+    return waktu_iteratif, waktu_rekursif
+
+def main():
+    print("Hai!. Selamat datang di pencarian jadwal kereta api!")
 
     iteratif_times = []
     rekursif_times = []
@@ -59,48 +65,31 @@ if __name__ == "__main__":
 
     while True:
         try:
-            ukuran = int(input("Silahkan Masukkan ukuran dataset (note = input 0 untuk keluar): "))
-            if ukuran == 0:
-                print("Program berhenti. Thankyou, Have a Nice Day!")
+            size = int(input("Silahkan Masukkan ukuran dataset (note = input 0 untuk keluar): "))
+            if size == 0:
+                print("Program berhenti. Terima kasih sudah menggunakan. Berikut hasil analisis waktu dan grafik perbandingannya:")
                 break
-            if ukuran < 0:
-                print("Ukuran dataset harus positif. Silakan coba lagi.")
+            if size < 0:
+                print("Ukuran dataset tidak boleh negatif. Silakan coba lagi.")
                 continue
 
-            dataset_sizes.append(ukuran)
-            dataset = buat_dataset(ukuran)
-            keyword = input("Masukkan nama kota asal atau tujuan untuk pencarian: ")
-
-            print(f"Mencari jadwal kereta api dengan kata kunci: {keyword}")
-
-            hasil_iteratif, waktu_iteratif = cari_jadwal_iteratif(dataset, keyword)
-            hasil_rekursif, waktu_rekursif = cari_jadwal_rekursif(dataset, keyword)
-
-            if hasil_iteratif:
-                print(f"Pencarian Iteratif: Jadwal kereta api ditemukan: {hasil_iteratif}, Waktu: {waktu_iteratif:.6f} detik")
-            else:
-                print(f"Pencarian Iteratif: Jadwal kereta api tidak ditemukan, Waktu: {waktu_iteratif:.6f} detik")
-
-            if hasil_rekursif:
-                print(f"Pencarian Rekursif: Jadwal kereta api ditemukan: {hasil_rekursif}, Waktu: {waktu_rekursif:.6f} detik")
-            else:
-                print(f"Pencarian Rekursif: Jadwal kereta api tidak ditemukan, Waktu: {waktu_rekursif:.6f} detik")
-
+            dataset_sizes.append(size)
+            data_jadwal = buat_dataset(size)
+            waktu_iteratif, waktu_rekursif = cari_jadwal(data_jadwal, "Kota A")
             iteratif_times.append(waktu_iteratif)
             rekursif_times.append(waktu_rekursif)
-
         except ValueError:
             print("Input tidak valid. Harap masukkan angka.")
 
-    # Membuat tabel hasil analisis
+    # Menampilkan tabel analisis waktu
     print("\nHasil Analisis Waktu:")
     tabel = PrettyTable()
-    tabel.field_names = ["Ukuran Input", "Waktu Rekursif (d)", "Waktu Iteratif (d)"]
+    tabel.field_names = ["Ukuran Input", "Waktu Iteratif (d)", "Waktu Rekursif (d)"]
     for i, ukuran in enumerate(dataset_sizes):
-        tabel.add_row([ukuran, f"{rekursif_times[i]:.6f}", f"{iteratif_times[i]:.6f}"])
+        tabel.add_row([ukuran, f"{iteratif_times[i]:.6f}", f"{rekursif_times[i]:.6f}"])
     print(tabel)
 
-    # Membuat grafik 
+    # Membuat grafik jika ada data yang diinputkan
     if dataset_sizes:
         plt.figure(figsize=(10, 6))
         plt.plot(dataset_sizes, iteratif_times, label='Iteratif', marker='o', color='black', linestyle='-', linewidth=2)
@@ -112,7 +101,7 @@ if __name__ == "__main__":
         plt.ylim(0, max(max(iteratif_times), max(rekursif_times)) * 1.2)
         plt.legend(
             fontsize=10,
-            loc='upper center', 
+            loc='upper center',
             bbox_to_anchor=(0.5, 1.15),
             fancybox=True,
             shadow=True,
@@ -120,3 +109,6 @@ if __name__ == "__main__":
         )
         plt.tight_layout()
         plt.show()
+
+if __name__ == "__main__":
+    main()
