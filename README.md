@@ -1,4 +1,4 @@
-## Repository praktikum Algoritma & Pemrograman 2
+## Tugas Besar Mata Kuliah Analisis Kompleksitas Algoritma
 
 <pre>
 Perbandingan Efisiensi Algoritma Sequential Search Menggunakan Pendekatan Iteratif dan Rekursif
